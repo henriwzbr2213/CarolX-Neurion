@@ -1,0 +1,15 @@
+{
+  "name": "discord-gemini-dev-bot",
+  "version": "1.0.0",
+  "description": "Bot de Discord com Gemini para ajudar a desenvolver aplicações por etapas.",
+  "main": "src/bot.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/bot.js",
+    "check": "node --check src/bot.js && node --check src/promptBuilder.js"
+  },
+  "dependencies": {
+    "discord.js": "^14.15.3",
+    "dotenv": "^16.4.5"
+  }
+}
