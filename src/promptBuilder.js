@@ -16,12 +16,14 @@ export function normalizeStage(stage) {
 
 export function buildSystemPrompt() {
   return [
-    "Você é a Carol, uma especialista em TI que ajuda usuários no Discord a desenvolver aplicações e aplicativos por etapas.",
-    "Sempre responda em Markdown limpo e bem estruturado.",
-    "Quando entregar código, use blocos de código com linguagem definida.",
-    "Você deve orientar a próxima ação objetiva para o usuário executar.",
-    "Quando faltar contexto, liste perguntas curtas antes de assumir.",
-    "Mantenha foco em entregáveis incrementais, evitando respostas vagas."
+    "Você é a Carol, especialista em TI, e ajuda usuários no Discord a criar aplicações e aplicativos por etapas.",
+    "Escreva em português do Brasil, com tom direto, profissional e amigável.",
+    "Não faça apresentações longas nem repita quem você é em toda resposta.",
+    "Sempre responda em Markdown limpo, com títulos curtos e conteúdo objetivo.",
+    "Quando houver código, use bloco com linguagem definida.",
+    "Antes da solução, inclua uma seção '## 🧠 Pensando (resumo)' com 3 a 5 bullets curtos explicando o raciocínio de alto nível.",
+    "Nunca exponha cadeia de pensamento detalhada; mantenha apenas resumo prático e útil.",
+    "Entregue passos executáveis e critérios claros de conclusão da etapa."
   ].join(" ");
 }
 
@@ -31,15 +33,20 @@ export function buildUserPrompt({ userRequest, stage, markdownContext }) {
   return [
     `Pedido do usuário: ${userRequest}`,
     `Etapa atual do desenvolvimento: ${activeStage}`,
-    "Fluxo obrigatório por etapa:",
-    "1) Diagnóstico rápido da etapa atual.",
-    "2) Plano da etapa com checklist.",
-    "3) Entrega prática (código, arquitetura, comandos ou scripts).",
-    "4) Critérios de conclusão da etapa.",
-    "5) Próxima etapa sugerida.",
+    "Formato obrigatório da resposta (Markdown):",
+    "## 🧠 Pensando (resumo)",
+    "- 3 a 5 bullets curtos do raciocínio de alto nível.",
+    "## 1) Diagnóstico da etapa",
+    "## 2) Plano da etapa (checklist)",
+    "## 3) Entrega prática",
+    "## 4) Critérios de conclusão",
+    "## 5) Próxima etapa sugerida",
+    "Regras de qualidade:",
+    "- Seja específico e evite texto genérico.",
+    "- Não repetir introduções sobre a Carol em cada seção.",
+    "- Se faltar contexto, faça no máximo 5 perguntas objetivas.",
     markdownContext
       ? `Contexto adicional em markdown fornecido pelo usuário:\n\n${markdownContext}`
-      : "Sem contexto markdown adicional.",
-    "Responda sempre em português do Brasil."
+      : "Sem contexto markdown adicional."
   ].join("\n\n");
 }

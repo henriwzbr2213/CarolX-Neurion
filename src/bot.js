@@ -5,6 +5,8 @@ import { buildSystemPrompt, buildUserPrompt, normalizeStage } from "./promptBuil
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-2.0-flash";
+const GREETING_COOLDOWN_MS = 30 * 60 * 1000;
+const greetedUsers = new Map();
 
 if (!DISCORD_TOKEN || !GEMINI_API_KEY) {
   throw new Error("Defina DISCORD_TOKEN e GEMINI_API_KEY no .env");
@@ -35,6 +37,7 @@ client.on("messageCreate", async (message) => {
   await message.channel.sendTyping();
 
   try {
+    const shouldGreet = shouldSendGreeting(message.author.id);
     const cleanContent = message.content.replace(/<@!?\d+>/g, "").trim();
     const stage = parseStage(cleanContent);
     const markdownContext = await collectMarkdownContext(message);
@@ -52,7 +55,8 @@ client.on("messageCreate", async (message) => {
       userPrompt
     });
 
-    await sendChunkedMessage(message, response);
+    const finalResponse = shouldGreet ? `${buildWelcomeMessage()}\n\n${response}` : response;
+    await sendChunkedMessage(message, finalResponse);
   } catch (error) {
     console.error(error);
     await message.reply("❌ Falhei ao chamar o Gemini. Verifique token/modelo e tente novamente.");
@@ -92,6 +96,22 @@ async function callGemini({ apiKey, model, systemInstruction, userPrompt }) {
   const text = data?.candidates?.[0]?.content?.parts?.map((part) => part.text).join("\n");
 
   return text?.trim() || "Não consegui gerar resposta no momento.";
+}
+
+function shouldSendGreeting(userId) {
+  const now = Date.now();
+  const lastGreet = greetedUsers.get(userId);
+
+  if (!lastGreet || now - lastGreet >= GREETING_COOLDOWN_MS) {
+    greetedUsers.set(userId, now);
+    return true;
+  }
+
+  return false;
+}
+
+function buildWelcomeMessage() {
+  return "👋 Oi! Sou a Carol. Bora construir sua aplicação por etapas de forma prática.";
 }
 
 function parseStage(content) {

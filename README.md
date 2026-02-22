@@ -7,6 +7,7 @@ Bot para Discord que usa Gemini para ajudar a construir aplicações **por etapa
 - Responde quando for mencionado em canais ou em DM.
 - Usa modelo Gemini configurável (padrão: `gemini-2.0-flash`).
 - Estrutura a resposta por etapas: diagnóstico, plano, entrega, critérios e próxima etapa.
+- Envia uma boas-vindas curta na primeira interação do usuário (com cooldown para evitar repetição).
 - Lê markdown de:
   - links terminando em `.md`
   - anexos `.md` e `.markdown`
